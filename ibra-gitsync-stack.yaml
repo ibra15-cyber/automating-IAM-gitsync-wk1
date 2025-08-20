@@ -18,7 +18,7 @@ Resources:
       GroupName: EC2Group
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess'
-        - arn:aws:iam::aws:policy/IAMUserChangePassword
+        - 'arn:aws:iam::aws:policy/IAMUserChangePassword'
 
 
 
@@ -28,7 +28,7 @@ Resources:
       GroupName: S3Group
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
-        - arn:aws:iam::aws:policy/IAMUserChangePassword
+        - 'arn:aws:iam::aws:policy/IAMUserChangePassword'
 
 
 
@@ -52,6 +52,21 @@ Resources:
       - S3UserGroup
     Properties:
       UserName: s3-user
+      Groups:
+        - !Ref S3UserGroup
+      LoginProfile:
+        Password: !Sub '{{resolve:secretsmanager:${UserPasswordSecret}}}'
+        PasswordResetRequired: true
+
+
+
+  S3User1:
+    Type: 'AWS::IAM::User'
+    DependsOn:
+      - UserPasswordSecret
+      - S3UserGroup
+    Properties:
+      UserName: s3-user-1
       Groups:
         - !Ref S3UserGroup
       LoginProfile:
