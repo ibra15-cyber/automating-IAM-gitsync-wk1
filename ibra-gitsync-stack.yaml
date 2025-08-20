@@ -59,3 +59,17 @@ Resources:
         PasswordResetRequired: true
 
 
+  S3User1:
+    Type: 'AWS::IAM::User'
+    DependsOn:
+      - UserPasswordSecret
+      - S3UserGroup
+    Properties:
+      UserName: s3-user-1
+      Groups:
+        - !Ref S3UserGroup
+      LoginProfile:
+        Password: !Sub '{{resolve:secretsmanager:${UserPasswordSecret}}}'
+        PasswordResetRequired: true
+
+
